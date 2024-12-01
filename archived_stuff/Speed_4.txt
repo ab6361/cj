@@ -1,0 +1,74 @@
+Timer unit: 1e-09 s
+
+Total time: 0 s
+File: /var/folders/_8/jr423pqd4ld_d5cxmtbz54_00000gn/T/ipykernel_3757/1523658089.py
+Function: integrate_f2_f0 at line 35
+
+Line #      Hits         Time  Per Hit   % Time  Line Contents
+==============================================================
+    35                                           def integrate_f2_f0(x_val):
+    36                                               """Perform numerical integration for the provided x_val."""
+    37                                               warnings.simplefilter("ignore")
+    38                                               f2dxd, error = quad(integrand, x_val, 1, args=(x_val,), points=[0.5])
+    39                                               return f2dxd, error
+
+Total time: 0 s
+File: /var/folders/_8/jr423pqd4ld_d5cxmtbz54_00000gn/T/ipykernel_3757/660420789.py
+Function: get_interpolator at line 4
+
+Line #      Hits         Time  Per Hit   % Time  Line Contents
+==============================================================
+     4                                           def get_interpolator(gamma_fixed):
+     5                                               """Retrieve or create an interpolator for the specified gamma value."""
+     6                                               if gamma_fixed not in results_cache:
+     7                                                   mask = gamma_array == gamma_fixed
+     8                                                   y_filtered = y_array[mask]
+     9                                                   f0_filtered = f0_array[mask]
+    10                                                   # Cache the interpolator
+    11                                                   results_cache[gamma_fixed] = interp1d(y_filtered, f0_filtered, kind='linear', fill_value='extrapolate')
+    12                                               return results_cache[gamma_fixed]
+
+Total time: 0 s
+File: /var/folders/_8/jr423pqd4ld_d5cxmtbz54_00000gn/T/ipykernel_3757/660420789.py
+Function: phi_int2d_fixed_gamma at line 14
+
+Line #      Hits         Time  Per Hit   % Time  Line Contents
+==============================================================
+    14                                           def phi_int2d_fixed_gamma(y_D_grid, gamma_fixed):
+    15                                               """Calculate interpolated values over a grid of y_D values for a fixed gamma."""
+    16                                               interpolator = get_interpolator(gamma_fixed)
+    17                                               return interpolator(y_D_grid)
+
+Total time: 0.000213 s
+File: /var/folders/_8/jr423pqd4ld_d5cxmtbz54_00000gn/T/ipykernel_3757/660420789.py
+Function: f2nxn_function at line 19
+
+Line #      Hits         Time  Per Hit   % Time  Line Contents
+==============================================================
+    19                                           def f2nxn_function(x):
+    20                                               """Function to process x values, converting from x_D to x_N and calculating the formula."""
+    21         1      15000.0  15000.0      7.0      x_N = 2 * x  # Convert from x_D to x_N
+    22         1     198000.0 198000.0     93.0      return 4 * x_N**0.7 * (1 - x_N)**3.5 * (1 + 4 * x_N) + 0.15 * x_N**(-0.4) * (1 - x_N)**9 * (1 + 16 * x_N)
+
+Total time: 0 s
+File: /var/folders/_8/jr423pqd4ld_d5cxmtbz54_00000gn/T/ipykernel_3757/660420789.py
+Function: f2_function at line 24
+
+Line #      Hits         Time  Per Hit   % Time  Line Contents
+==============================================================
+    24                                           def f2_function(x, y_D):
+    25                                               """Calculate the f2 function based on x and y_D."""
+    26                                               k = x / y_D
+    27                                               return 4 * k**0.7 * (1 - k)**3.5 * (1 + 4 * k) + 0.15 * k**(-0.4) * (1 - k)**9 * (1 + 16 * k)
+
+Total time: 0 s
+File: /var/folders/_8/jr423pqd4ld_d5cxmtbz54_00000gn/T/ipykernel_3757/660420789.py
+Function: integrand at line 29
+
+Line #      Hits         Time  Per Hit   % Time  Line Contents
+==============================================================
+    29                                           def integrand(y_D_grid, x):
+    30                                               """Integrand function combining f0 and f2 computations."""
+    31                                               f0 = phi_int2d_fixed_gamma(y_D_grid, gamma_fixed)
+    32                                               f2 = f2_function(x, y_D_grid)
+    33                                               return f2 * f0
